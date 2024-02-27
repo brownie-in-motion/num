@@ -82,10 +82,11 @@ const getResponseData = async () => {
 }
 
 const app = express()
+app.use(express.static('public'))
 
 app.get('/', async (_req, res) => {
     const data = await getResponseData()
-    const rendered = Object.entries(data).reduce((h, [k, v]) => h.replace(`{${k}}`, v), html)
+    const rendered = html.replace(/{(\w+)}/g, (_, k) => data[k])
     res.send(rendered)
 })
 
