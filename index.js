@@ -1,8 +1,12 @@
 const compress = require('lz-string')
 const express = require('express')
 
+const fs = require('fs')
+
 NY_TIMES_URL = 'https://www.nytimes.com/puzzles/sudoku'
 SUDOKU_PAD_ROOT = 'https://sudokupad.app'
+
+const html = fs.readFileSync('index.html', 'utf8')
 
 const dataCache = {
     lastUpdated: 0,
@@ -73,6 +77,7 @@ const getResponseData = async () => {
         easy: e,
         medium: m,
         hard: h,
+        date,
     }
 }
 
@@ -80,7 +85,8 @@ const app = express()
 
 app.get('/', async (_req, res) => {
     const data = await getResponseData()
-    res.json(data)
+    const rendered = Object.entries(data).reduce((h, [k, v]) => h.replace(`{${k}}`, v), html)
+    res.send(rendered)
 })
 
 app.listen(80)
