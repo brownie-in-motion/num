@@ -27,13 +27,13 @@ const getSudokuData = async () => {
 const serializeBoard = (date, data) => {
     const day = data['day_of_week']
     const difficulty = data['difficulty']
-    const { puzzle } = data['puzzle_data']
+    const { puzzle, solution } = data['puzzle_data']
 
-    const chunks = [[]]
-    for (const number of puzzle) {
-        if (chunks.at(-1).length === 9) chunks.push([])
-        chunks.at(-1).push(number === 0 ? {} : { value: number, given: true })
-    }
+    const chunks = []
+    solution.forEach((value, i) => {
+        if (i % 9 === 0) chunks.push([])
+        chunks.at(-1).push({ value, given: puzzle[i] !== 0 })
+    })
 
     return compress.compressToBase64(
         JSON.stringify({
