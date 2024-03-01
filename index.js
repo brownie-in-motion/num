@@ -3,8 +3,8 @@ const express = require('express')
 
 const fs = require('fs')
 
-NY_TIMES_URL = 'https://www.nytimes.com/puzzles/sudoku'
-SUDOKU_PAD_ROOT = 'https://sudokupad.app'
+const NY_TIMES_URL = 'https://www.nytimes.com/puzzles/sudoku'
+const SUDOKU_PAD_ROOT = 'https://sudokupad.app'
 
 const html = fs.readFileSync('index.html', 'utf8')
 
