@@ -12,19 +12,21 @@ const dataCache = {
     lastUpdated: 0,
     data: {},
 }
+const hydrateSudokuData = async () => {
+    const response = await fetch(NY_TIMES_URL)
+    const data = await response.text()
+
+    const search = 'window.gameData = '
+    let extracted = data.substring(data.indexOf(search) + search.length)
+    extracted = extracted.substring(0, extracted.indexOf('</script>'))
+
+    dataCache.lastUpdated = Math.floor(Date.now() / (60 * 60 * 1000))
+    dataCache.data = JSON.parse(extracted)
+}
+
 const getSudokuData = async () => {
     const now = Math.floor(Date.now() / (60 * 60 * 1000))
-    if (now !== dataCache.lastUpdated) {
-        const response = await fetch(NY_TIMES_URL)
-        const data = await response.text()
-
-        const search = 'window.gameData = '
-        let extracted = data.substring(data.indexOf(search) + search.length)
-        extracted = extracted.substring(0, extracted.indexOf('</script>'))
-
-        dataCache.lastUpdated = now
-        dataCache.data = JSON.parse(extracted)
-    }
+    if (now !== dataCache.lastUpdated) await hydrateSudokuData()
     return dataCache.data
 }
 
@@ -91,3 +93,5 @@ app.get('/', async (_req, res) => {
 })
 
 app.listen(8000)
+
+setInterval(hydrateSudokuData, 10 * 60 * 1000)
